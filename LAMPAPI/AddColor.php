@@ -1,6 +1,6 @@
 <?php
 
-	header("Access-Control-Allow-Origin: http://header("Access-Control-Allow-Origin: http://138.197.87.182");
+	header("Access-Control-Allow-Origin: http://header("Access-Control-Allow-Origin: http://137.184.185.65");
 	header("Access-Control-Allow-Headers: Content-Type");
 	header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 

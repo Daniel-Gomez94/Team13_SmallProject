@@ -20,16 +20,17 @@ paths:
       - Users
       summary: Logs into the contacts app
       operationId: doLogin
-      description: Logs in to colors app
-      
+      description: Logs in to contacts app
       consumes:
       - application/json
       produces:
+      - application/json
+      parameters:
       - in: body
         name: loginItem
         description: Login
         schema:
-          $ref: '#/definitions/Login
+          $ref: '#/definitions/Login'
           
       responses:
         200:
@@ -43,8 +44,7 @@ paths:
       - Contacts
       summary: Adds a contact
       operationId: addContact
-      description: Adds a contact to the contact app
-    database
+      description: Adds a contact to the contact app database
       consumes:
       - application/json
       produces:
@@ -60,7 +60,7 @@ paths:
           description: OK
         404:
           description: URL Not Found
-  /SearchContacts.aspx:
+  /SearchContacts.php:
     post:
       tags:
       - Search
@@ -71,7 +71,7 @@ paths:
       - application/json
       produces:
       - application/json
-      paremeters:
+      parameters:
       - in: body
         name: searchItem
         description: Contact Search
@@ -82,21 +82,42 @@ paths:
           description: OK
         404:
           description: URL Not Found
+  /CreateUsers.php:
+    post:
+      tags:
+      - Create
+      summary: Creates a user
+      operationId: createUser
+      description: Creates a user to login with
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: createItem
+        description: Create User
+        schema:
+          $ref: '#/definitions/Create'
+      responses:
+        200:
+          description: OK
+        404:
+          description: URL Not Found
           
-  
- Login:
-  type: object
-  required:
-  - login
-  - password
-  properties:
-    login:
-      type: string
-      example: "fred"
-    password:
-      type: string
-      
-      example: "secret"
+definitions:
+  Login:
+    type: object
+    required:
+    - login
+    - password
+    properties:
+      login:
+        type: string
+        example: "fred"
+      password:
+        type: string
+        example: "secret"
   Contact: #I can add more properties idk if I need the email or phone number for the contacts
     type: object
     required:
@@ -125,8 +146,27 @@ paths:
       search:
         type: string
         example: "mar"
-        
-host: contacts.com
+  Create:
+    type: object
+    required:
+    - login
+    - password
+    - firstname
+    - lastname
+    properties:
+      login:
+        type: string
+        example: "carl0672"
+      password:
+        type: string
+        example: "secret1212"
+      firstname:
+        type: string
+        example: "santos"
+      lastname:
+        type: string
+        example: "smith"
+host: 137.184.185.65 #change to whatever out url/domain name is
 basePath: /LAMPAPI
 schemes:
 - http
