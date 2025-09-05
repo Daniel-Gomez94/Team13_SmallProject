@@ -1,99 +1,83 @@
 ﻿<?php
-
+// CORS
 header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-header("Content-Type: application/json; charset=utf-8");
-
-// Debug messages collector
-$debugMessages = [];
-
-function debug($msg) {
-    global $debugMessages;
-    $timestamp = date("H:i:s");
-    $debugMessages[] = "[$timestamp] $msg";
+// Preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
 }
 
-// Read and decode input
-$rawInput = file_get_contents("php://input");
-debug("RAW INPUT: $rawInput");
-
-$inData = json_decode($rawInput, true);
-$firstName = $inData["firstName"] ?? "";
-$lastName  = $inData["lastName"] ?? "";
-$login     = $inData["login"] ?? "";
-$password  = $inData["password"] ?? "";
-
-debug("Parsed Input → First: $firstName, Last: $lastName, Login: $login");
-
-// Validate input
-if (!$firstName || !$lastName || !$login || !$password) {
-    debug("Missing required fields");
-    returnWithError("All fields are required.");
-    exit;
+// Helpers
+function sendJson($obj, $status = 200) {
+  http_response_code($status);
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode($obj);
+  exit;
 }
 
-// Connect to database
-$conn = new mysqli("localhost", "COP4331User", "COP4331Password", "COP4331");
+function getJsonBody() {
+  $raw = file_get_contents('php://input');
+  $data = json_decode($raw, true);
+  if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+    sendJson(['error' => 'Invalid JSON body'], 400);
+  }
+  return $data ?: [];
+}
+
+// Read input
+$in = getJsonBody();
+$firstName = trim($in['firstName'] ?? '');
+$lastName  = trim($in['lastName']  ?? '');
+$login     = trim($in['login']     ?? '');
+$password  = trim($in['password']  ?? '');
+
+// Validate
+if ($firstName === '' || $lastName === '' || $login === '' || $password === '') {
+  sendJson(['error' => 'All fields are required.'], 400);
+}
+
+// DB connect (make sure this matches your other files)
+$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
 if ($conn->connect_error) {
-    debug("DB CONNECTION ERROR: " . $conn->connect_error);
-    returnWithError("Database connection failed");
-    exit;
+  sendJson(['error' => 'Database connection failed'], 500);
 }
 
-// Check for duplicate login
+// Check duplicate username
 $stmt = $conn->prepare("SELECT ID FROM Users WHERE Login = ?");
 $stmt->bind_param("s", $login);
 $stmt->execute();
 $stmt->store_result();
-
 if ($stmt->num_rows > 0) {
-    debug("Username already exists");
-    $stmt->close();
-    $conn->close();
-    returnWithError("Username already exists.");
-    exit;
+  $stmt->close();
+  $conn->close();
+  sendJson(['error' => 'Username already exists.'], 409);
 }
 $stmt->close();
 
-// Hash password
-$hashedPassword = md5($password);
-debug("Hashed Password: $hashedPassword");
+// Hash password (kept MD5 to match existing Login.php behavior)
+$hashed = md5($password);
 
-// Insert new user
+// Insert user
 $stmt = $conn->prepare("INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("ssss", $firstName, $lastName, $login, $hashedPassword);
+$stmt->bind_param("ssss", $firstName, $lastName, $login, $hashed);
 
 if ($stmt->execute()) {
-    debug("User created successfully");
-    returnWithSuccess("User created successfully.");
+  $newId = $stmt->insert_id;
+  $stmt->close();
+  $conn->close();
+  // Return canonical response used across your API
+  sendJson([
+    'id'        => (int)$newId,
+    'firstName' => $firstName,
+    'lastName'  => $lastName,
+    'error'     => ''
+  ], 201);
 } else {
-    debug("Insert failed: " . $stmt->error);
-    returnWithError("Insert failed: " . $stmt->error);
+  $err = $stmt->error;
+  $stmt->close();
+  $conn->close();
+  sendJson(['error' => "Insert failed: $err"], 500);
 }
-
-$stmt->close();
-$conn->close();
-
-// Response helpers
-function returnWithError($err) {
-    global $debugMessages;
-    echo json_encode([
-        "error" => $err,
-        "debug" => $debugMessages
-    ]);
-}
-
-function returnWithSuccess($msg) {
-    global $debugMessages;
-    echo json_encode([
-        "error" => "",
-        "message" => $msg,
-        "debug" => $debugMessages
-    ]);
-}
-?>

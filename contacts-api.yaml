@@ -13,21 +13,28 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
+host: 137.184.185.65 #change to whatever out url/domain name is
+basePath: /LAMPAPI
+schemes:
+- http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
 paths:
   /Login.php:
     post:
       tags:
       - Users
-      summary: Logs into the contacts app
+      summary: Logs in and returns user info
       operationId: doLogin
-      description: Logs in to contacts app
-      consumes:
-      - application/json
-      produces:
-      - application/json
+      description: Expects plain password; backend hashes with MD5 to compare 
       parameters:
       - in: body
         name: loginItem
+        required: true
         description: Login
         schema:
           $ref: '#/definitions/Login'
@@ -35,8 +42,22 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        400:
+          description: Missing login or password
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Invalid credentials
+          schema: 
+            $ref: '#/definitions/Error'
         404:
           description: URL Not Found
+        500:
+          description: Server/DB error
+          schema:
+            $ref: '#/definitions/Error'
         
   /AddContact.php:
     post:
@@ -45,21 +66,32 @@ paths:
       summary: Adds a contact
       operationId: addContact
       description: Adds a contact to the contact app database
-      consumes:
-      - application/json
-      produces:
-      - application/json
       parameters:
       - in: body
         name: contactItem
+        required: true
         description: Contact
         schema:
-          $ref: '#/definitions/Contact'
+          $ref: '#/definitions/ContactAddRequest'
       responses:
-        200:
-          description: OK
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UserCreatedResponse'
+        400:
+          description: Validation error (missing fields)
+          schema:
+           $ref: '#/definitions/Error'
         404:
           description: URL Not Found
+        409:
+          description: Username already exists
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server/DB error
+          schema:
+            $ref: '#/definitions/Error'
   /SearchContacts.php:
     post:
       tags:
@@ -67,21 +99,28 @@ paths:
       summary: Searches contact list
       operationId: searchContact
       description: Searches contact from the contacts database
-      consumes:
-      - application/json
-      produces:
-      - application/json
       parameters:
       - in: body
         name: searchItem
+        required: true
         description: Contact Search
         schema:
           $ref: '#/definitions/Search'
       responses:
         200:
-          description: OK
+          description: Resluts (possibly empty)
+          schema:
+            $ref: '#/definitions/SearchResponse'
+        400:
+          description: Validation error (missing userId)
+          schema:
+            $ref: '#/definitions/Error'
         404:
           description: URL Not Found
+        500:
+          description: Server/DB error
+          schema:
+            $ref: '#/definitions/Error'
   /CreateUsers.php:
     post:
       tags:
@@ -89,23 +128,42 @@ paths:
       summary: Creates a user
       operationId: createUser
       description: Creates a user to login with
-      consumes:
-      - application/json
-      produces:
-      - application/json
       parameters:
       - in: body
         name: createItem
         description: Create User
+        required: true
         schema:
           $ref: '#/definitions/Create'
       responses:
-        200:
-          description: OK
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/UserCreatedResponse'
+        400:
+          description: Validation error (missing fields)
+          schema:
+            $ref: '#/definitions/Error'
         404:
           description: URL Not Found
+        409:
+          description: Username already exists
+          schema:
+            $ref: '#/definitions/Error'
+        500:
+          description: Server/DB error
+          schema:
+            $ref: '#/definitions/Error'
           
 definitions:
+  Error:
+    type: object
+    required:
+    - error
+    properties:
+      error:
+        type: string
+        example: "Invalid credentials"
   Login:
     type: object
     required:
@@ -118,22 +176,26 @@ definitions:
       password:
         type: string
         example: "secret"
-  Contact: #I can add more properties idk if I need the email or phone number for the contacts
+  LoginResponse:
     type: object
     required:
-    - userId
-    - contact
-    - phoneNumber
+    - id
+    - firstName
+    - lastName
+    - error
     properties:
-      userId:
+      id:
         type: integer
-        example: 1
-      contact:
+        example: 12
+      firstName:
         type: string
         example: "John"
-      phoneNumber:
+      lastName:
         type: string
-        example: "516-778-9904"
+        example: 'Snow'
+      error:
+        type: string
+        example: ""
   Search:
     type: object
     required:
@@ -166,7 +228,69 @@ definitions:
       lastname:
         type: string
         example: "smith"
-host: 137.184.185.65 #change to whatever out url/domain name is
-basePath: /LAMPAPI
-schemes:
-- http
+  UserCreatedResponse:
+    type: object
+    required:
+    - id
+    - firstName
+    - lastName
+    - error
+    properties:
+      id:
+        type: integer
+        example: 12
+      firstName:
+        type: string
+        example: "John"
+      lastName:
+        type: string
+        example: "Snow"
+      error:
+        type: string
+        example: ""
+  ContactAddRequest:
+    type: object
+    required:
+    - userId
+    - contact
+    properties:
+      userId:
+        type: integer
+        example: 12
+      contact:
+        type: string
+        example: "Maria Rodriguez"
+  ContactAddResponse:
+    type: object
+    required:
+    - id
+    - userId
+    - name
+    - error
+    properties:
+      id:
+        type: integer
+        example: 101
+      userId:
+        type: integer
+        example: 12
+      name:
+        type: string
+        example: "John Snow"
+      error:
+        type: string
+        example: ""
+  SearchResponse:
+    type: object
+    required:
+    - results
+    - error
+    properties:
+      results:
+        type: array
+        items:
+          type: string
+        example: ["John Snow", "Mark Hamil"]
+      error:
+        type: string
+        example: ""
