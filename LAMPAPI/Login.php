@@ -36,7 +36,7 @@ if ($login === '' || $password === '') {
 }
 
 // DB
-$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
+$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "Smallproject");
 if ($conn->connect_error) {
   sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'DB connection failed'], 500);
 }

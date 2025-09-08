@@ -40,7 +40,7 @@ if ($firstName === '' || $lastName === '' || $login === '' || $password === '') 
 }
 
 // DB connect (make sure this matches your other files)
-$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
+$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "Smallproject");
 if ($conn->connect_error) {
   sendJson(['error' => 'Database connection failed'], 500);
 }
