@@ -1,0 +1,233 @@
+﻿body {
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    font-family: 'Ubuntu', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.app-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem 2rem 2rem;
+    min-width: 320px;
+    max-width: 350px;
+    margin: 1rem;
+}
+
+#title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3a4b;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.app-icon {
+    color: #4e8cff;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: center;
+}
+
+#inner-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4e8cff;
+    margin-bottom: 1rem;
+    display: block;
+    text-align: center;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.5rem 0;
+    border: 1px solid #d1d9e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f7faff;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border: 1.5px solid #4e8cff;
+    outline: none;
+}
+
+.buttons {
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.5rem 0 0.2rem 0;
+    background: #4e8cff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.buttons:hover {
+    background: #2563eb;
+}
+
+#register-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.2rem;
+    color: #2563eb;
+    font-size: 0.98rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#registerResult, #loginResult {
+    display: block;
+    min-height: 1.2em;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0.5rem 0;
+}
+
+/* Error states */
+#registerResult:not(:empty), #loginResult:not(:empty) {
+    color: #dc2626;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+/* Success state for registration */
+#registerResult.success {
+    color: #059669;
+    background-color: #f0fdfa;
+    border-color: #a7f3d0;
+}
+
+#userName {
+    display: inline-block;
+    width: 80%;
+    margin-left: 10%;
+    text-align: center;
+}
+
+#logoutButton {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+select {
+    width: 100%;
+    margin-top: 2%;
+    font-size: 1rem;
+    font-family: 'Ubuntu', sans-serif;
+    border-radius: 8px;
+    padding: 0.5rem;
+    border: 1px solid #d1d9e6;
+    background: #f7faff;
+}
+
+#colorSearchResult, #colorAddResult {
+    display: block;
+    font-size: 0.98rem;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-family: 'Ubuntu', sans-serif;
+    color: #4e8cff;
+}
+
+#contactSearchResult, #contactAddResult {
+    display: block;
+    font-size: 0.98rem;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-family: 'Ubuntu', sans-serif;
+    color: #4e8cff;
+}
+
+/* Contact-specific styles */
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.contact-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.contact-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.contact-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3a4b;
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    color: #64748b;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+#accessUIDiv {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+#contactList {
+    margin-top: 2rem;
+}
+
+@media (max-width: 400px) {
+    .app-card { min-width: 90vw; }
+    .contacts-grid {
+        grid-template-columns: 1fr;
+    }
+}

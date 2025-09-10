@@ -1,13 +1,13 @@
-<?php
-// Configure cross-origin resource sharing headers
+﻿<?php
+// CORS
 header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
-// Handle preflight requests
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
-// Helper functions for JSON handling
+// Helpers
 function sendJson($obj, $status = 200) {
   http_response_code($status);
   header('Content-Type: application/json; charset=utf-8');
@@ -23,7 +23,7 @@ function getJsonBody() {
   return $data ?: [];
 }
 
-// Read and validate input parameters
+// Read + validate
 $in = getJsonBody();
 $userId    = $in['userId'] ?? null;
 $firstName = isset($in['firstName']) ? trim($in['firstName']) : '';
@@ -35,11 +35,11 @@ if (!is_numeric($userId) || $firstName === '' || $lastName === '') {
   sendJson(['error' => 'userId (int), firstName, and lastName are required'], 400);
 }
 
-// Establish database connection
+// DB
 $conn = new mysqli("localhost","TheBeast","WeLoveCOP4331","Smallproject");
-if ($conn->connect_error) { sendJson(['error' => 'Database connection failed'], 500); }
+if ($conn->connect_error) { sendJson(['error' => 'DB connection failed'], 500); }
 
-// Insert new contact record
+// Insert (email/phone can be empty strings if your schema is NOT NULL-safe)
 $stmt = $conn->prepare(
   "INSERT INTO Contacts (UserID, FirstName, LastName, Email, Phone)
    VALUES (?, ?, ?, ?, ?)"
