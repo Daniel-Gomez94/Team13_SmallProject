@@ -1,6 +1,6 @@
 <?php
 // CORS
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // keeping POST for consistency
 
@@ -23,22 +23,20 @@ function getJsonBody() {
   return $data ?: [];
 }
 
-$in = getJsonBody();
-$id        = $in['id']        ?? null;
-$userId    = $in['userId']    ?? null;
-$firstName = isset($in['firstName']) ? trim($in['firstName']) : '';
-$lastName  = isset($in['lastName'])  ? trim($in['lastName'])  : '';
-$email     = isset($in['email'])     ? trim($in['email'])     : '';
-$phone     = isset($in['phone'])     ? trim($in['phone'])     : '';
 
-if (!is_numeric($id) || !is_numeric($userId) || $firstName === '' || $lastName === '') {
-  sendJson(['error' => 'id, userId (int), firstName, and lastName are required'], 400);
+$in     = getJsonBody();
+$id     = $in['id']     ?? null;   // contact ID to delete
+$userId = $in['userId'] ?? null;   // owner user ID
+
+if (!is_numeric($id) || !is_numeric($userId)) {
+  sendJson(['error' => 'id and userId are required (integers)'], 400);
 }
+
 
 $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "Smallproject");
 if ($conn->connect_error) { sendJson(['error' => 'DB connection failed'], 500); }
 
-// Check if contact exists and belongs to the user
+
 $chk = $conn->prepare("SELECT ID FROM Contacts WHERE ID = ? AND UserID = ? LIMIT 1");
 if (!$chk) { $conn->close(); sendJson(['error' => 'Prepare failed'], 500); }
 $chk->bind_param("ii", $id, $userId);
@@ -50,25 +48,22 @@ if (!$exists) {
   sendJson(['error' => 'Contact not found for this userId'], 404);
 }
 
-// Update contact
-$upd = $conn->prepare("UPDATE Contacts SET FirstName = ?, LastName = ?, Email = ?, Phone = ? WHERE ID = ? AND UserID = ?");
-if (!$upd) { $conn->close(); sendJson(['error' => 'Prepare failed'], 500); }
-$upd->bind_param("ssssii", $firstName, $lastName, $email, $phone, $id, $userId);
-if (!$upd->execute()) {
-  $err = $upd->error; $upd->close(); $conn->close();
-  sendJson(['error' => "Update failed: $err"], 500);
+// Delete section
+$del = $conn->prepare("DELETE FROM Contacts WHERE ID = ? AND UserID = ?");
+if (!$del) { $conn->close(); sendJson(['error' => 'Prepare failed'], 500); }
+$del->bind_param("ii", $id, $userId);
+if (!$del->execute()) {
+  $err = $del->error; $del->close(); $conn->close();
+  sendJson(['error' => "Delete failed: $err"], 500);
 }
-$affected = $upd->affected_rows;
-$upd->close();
+$affected = $del->affected_rows;
+$del->close();
 $conn->close();
 
-// Return updated contact info
-sendJson([
-  'id'        => (int)$id,
-  'userId'    => (int)$userId,
-  'firstName' => $firstName,
-  'lastName'  => $lastName,
-  'email'     => $email,
-  'phone'     => $phone,
-  'error'     => ''
-], 200);
+if ($affected !== 1) {
+  // Shouldn't happen after we verified, but just in case
+  sendJson(['error' => 'Contact not deleted'], 500);
+}
+
+// Return a simple confirmation payload
+sendJson(['id' => (int)$id, 'userId' => (int)$userId, 'error' => ''], 200);

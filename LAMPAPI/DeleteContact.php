@@ -1,8 +1,8 @@
 <?php
 // CORS
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // keeping POST for consistency
 
 // Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }

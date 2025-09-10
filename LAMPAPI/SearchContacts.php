@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
@@ -31,17 +31,16 @@ if (!is_numeric($userId)) {
 $conn = new mysqli("localhost","TheBeast","WeLoveCOP4331","Smallproject");
 if ($conn->connect_error) { sendJson(['results'=>[], 'error'=>'DB connection failed'], 500); }
 
-// Updated SQL to search across first name, last name, email, and phone
 $sql = "SELECT ID, FirstName, LastName, Email, Phone
         FROM Contacts
-        WHERE (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR Phone LIKE ?) AND UserID = ?
+        WHERE (FirstName LIKE ? OR LastName LIKE ?) AND UserID = ?
         ORDER BY LastName, FirstName";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) { $conn->close(); sendJson(['results'=>[], 'error'=>'Prepare failed'], 500); }
 
 $like = "%".$search."%";
-$stmt->bind_param("ssssi", $like, $like, $like, $like, $userId); // s,s,s,s,int
+$stmt->bind_param("ssi", $like, $like, $userId); // s,s,int
 if (!$stmt->execute()) {
   $stmt->close(); $conn->close();
   sendJson(['results'=>[], 'error'=>'Query failed'], 500);
