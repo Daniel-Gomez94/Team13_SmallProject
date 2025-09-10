@@ -1,6 +1,6 @@
 ﻿<?php
-// CORS - allow both origins
-header("Access-Control-Allow-Origin: *");
+// CORS
+header("Access-Control-Allow-Origin: http://137.184.185.65");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
@@ -47,10 +47,6 @@ if ($conn->connect_error) {
 
 // Check duplicate username
 $stmt = $conn->prepare("SELECT ID FROM Users WHERE Login = ?");
-if (!$stmt) {
-  $conn->close();
-  sendJson(['error' => 'Prepare failed'], 500);
-}
 $stmt->bind_param("s", $login);
 $stmt->execute();
 $stmt->store_result();
@@ -66,10 +62,6 @@ $hashed = md5($password);
 
 // Insert user
 $stmt = $conn->prepare("INSERT INTO Users (FirstName, LastName, Login, Password) VALUES (?, ?, ?, ?)");
-if (!$stmt) {
-  $conn->close();
-  sendJson(['error' => 'Prepare failed'], 500);
-}
 $stmt->bind_param("ssss", $firstName, $lastName, $login, $hashed);
 
 if ($stmt->execute()) {
