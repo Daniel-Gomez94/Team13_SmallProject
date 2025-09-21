@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:css\\styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\contacts.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:contacts.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\js\\md5.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:js\\md5.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
@@ -11,24 +23,12 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:js\\code.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\contacts.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:contacts.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\Login.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:LAMPAPI\\Login.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\color.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:color.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:css\\styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css||{8B382828-6202-11D1-8870-0000F87579D2}|",
@@ -49,6 +49,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\DeleteContact.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:LAMPAPI\\DeleteContact.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\ModifyContact.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:LAMPAPI\\ModifyContact.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,17 +62,29 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 12,
+              "Title": "ModifyContact.php",
+              "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\ModifyContact.php",
+              "RelativeDocumentMoniker": "LAMPAPI\\ModifyContact.php",
+              "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\ModifyContact.php",
+              "RelativeToolTip": "LAMPAPI\\ModifyContact.php",
+              "ViewState": "AgIAAFEAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-09-21T15:46:16.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "md5.js",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\js\\md5.js",
               "RelativeDocumentMoniker": "js\\md5.js",
               "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\js\\md5.js",
               "RelativeToolTip": "js\\md5.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
               "WhenOpened": "2025-09-10T22:33:41.698Z",
               "EditorCaption": ""
@@ -83,8 +99,7 @@
               "RelativeToolTip": "LAMPAPI\\DeleteContact.php",
               "ViewState": "AgIAAEEAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-10T22:27:57.755Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T22:27:57.755Z"
             },
             {
               "$type": "Document",
@@ -96,8 +111,7 @@
               "RelativeToolTip": "LAMPAPI\\SearchContacts.php",
               "ViewState": "AgIAAD0AAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-10T22:27:40.134Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T22:27:40.134Z"
             },
             {
               "$type": "Document",
@@ -109,8 +123,7 @@
               "RelativeToolTip": "LAMPAPI\\AddContact.php",
               "ViewState": "AgIAAEEAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-10T22:27:27.31Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T22:27:27.31Z"
             },
             {
               "$type": "Document",
@@ -122,12 +135,11 @@
               "RelativeToolTip": "LAMPAPI\\CreateUsers.php",
               "ViewState": "AgIAAFIAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-10T22:27:11.954Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T22:27:11.954Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Login.php",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\LAMPAPI\\Login.php",
               "RelativeDocumentMoniker": "LAMPAPI\\Login.php",
@@ -135,12 +147,11 @@
               "RelativeToolTip": "LAMPAPI\\Login.php",
               "ViewState": "AgIAACsAAAAAAAAAAAAvwA4AAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-10T21:18:20.257Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T21:18:20.257Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "color.html",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\color.html",
               "RelativeDocumentMoniker": "color.html",
@@ -148,8 +159,7 @@
               "RelativeToolTip": "color.html",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-09-10T21:10:44.013Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T21:10:44.013Z"
             },
             {
               "$type": "Document",
@@ -159,39 +169,39 @@
               "RelativeDocumentMoniker": "css\\styles.css",
               "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css",
               "RelativeToolTip": "css\\styles.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-09-10T21:10:13.479Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "styles.css",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css",
               "RelativeDocumentMoniker": "css\\styles.css",
               "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\css\\styles.css",
               "RelativeToolTip": "css\\styles.css",
-              "ViewState": "AgIAAPsAAAAAAAAAAIBJwP0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAJgBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-09-10T21:10:13.291Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "code.js",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\js\\code.js",
               "RelativeDocumentMoniker": "js\\code.js",
               "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\js\\code.js",
               "RelativeToolTip": "js\\code.js",
-              "ViewState": "AgIAAHQAAAAAQDMzMzMZwAgCAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHoCAAAAAAAAAIBJwHwCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-09-10T21:09:43.635Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-10T21:09:43.635Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "contacts.html",
               "DocumentMoniker": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\contacts.html",
               "RelativeDocumentMoniker": "contacts.html",
@@ -210,7 +220,7 @@
               "RelativeDocumentMoniker": "index.html",
               "ToolTip": "C:\\Users\\money\\Desktop\\Dev\\COP4331\\Team13_SmallProject\\index.html",
               "RelativeToolTip": "index.html",
-              "ViewState": "AgIAABcAAAAAAAAAAABQPSEAAABdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAABdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
               "WhenOpened": "2025-09-10T21:08:35.909Z",
               "EditorCaption": ""

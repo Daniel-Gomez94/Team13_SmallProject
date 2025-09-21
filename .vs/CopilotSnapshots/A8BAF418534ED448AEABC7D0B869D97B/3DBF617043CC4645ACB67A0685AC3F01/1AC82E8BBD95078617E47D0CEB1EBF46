@@ -1,4 +1,4 @@
-const urlBase = 'http://137.184.185.65/LAMPAPI';
+﻿const urlBase = 'http://137.184.185.65/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -307,46 +307,6 @@ function readCookie()
 // contact management functions
 //==============================================
 
-let contactsVisible = false;
-
-function toggleContactsVisibility()
-{
-	const contactList = document.getElementById("contactList");
-	const showButton = document.getElementById("showContactsButton");
-	const hideButton = document.getElementById("hideContactsButton");
-	
-	if (contactsVisible) {
-		// hide contacts
-		contactList.style.display = "none";
-		contactList.innerHTML = "";
-		showButton.style.display = "inline-block";
-		hideButton.style.display = "none";
-		contactsVisible = false;
-		document.getElementById("contactSearchResult").innerHTML = "";
-	} else {
-		// show contacts
-		contactList.style.display = "block";
-		showButton.style.display = "none";
-		hideButton.style.display = "inline-block";
-		contactsVisible = true;
-		loadContacts();
-	}
-}
-
-//==============================================
-
-function clearSearch()
-{
-	document.getElementById("searchText").value = "";
-	document.getElementById("contactSearchResult").innerHTML = "";
-	
-	if (contactsVisible) {
-		loadContacts(); // reload all contacts if they're currently visible
-	}
-}
-
-//==============================================
-
 function addContact()
 {
 	let newFirstName = document.getElementById("firstNameText").value.trim();
@@ -386,11 +346,7 @@ function addContact()
 				document.getElementById("lastNameText").value = "";
 				document.getElementById("emailText").value = "";
 				document.getElementById("phoneText").value = "";
-				
-				// only refresh if contacts are currently visible
-				if (contactsVisible) {
-					loadContacts();
-				}
+				loadContacts(); // refresh the contact list
 			}
 			else if (this.readyState == 4) 
 			{
@@ -413,9 +369,6 @@ function searchContacts()
 {
 	let srch = document.getElementById("searchText").value;
 	document.getElementById("contactSearchResult").innerHTML = "";
-	
-	// show the contact list area when searching
-	document.getElementById("contactList").style.display = "block";
 	
 	let tmp = {search:srch,userId:userId};
 	let jsonPayload = JSON.stringify( tmp );
@@ -498,10 +451,7 @@ function displayContacts(contacts)
 			if(contact.phone) {
 				contactHtml += "<div class='contact-info'>Phone: " + contact.phone + "</div>";
 			}
-			contactHtml += "<div class='contact-actions'>";
-			contactHtml += "<button class='edit-btn' onclick='openEditModal(" + contact.id + ", \"" + contact.firstName + "\", \"" + contact.lastName + "\", \"" + (contact.email || "") + "\", \"" + (contact.phone || "") + "\")'>Edit</button>";
 			contactHtml += "<button class='delete-btn' onclick='deleteContact(" + contact.id + ")'>Delete</button>";
-			contactHtml += "</div>";
 			contactHtml += "</div>";
 		}
 		contactHtml += "</div>";
@@ -532,10 +482,7 @@ function deleteContact(contactId)
 		{
 			if (this.readyState == 4 && this.status == 200) 
 			{
-				// only refresh if contacts are currently visible
-				if (contactsVisible || document.getElementById("searchText").value.trim()) {
-					loadContacts();
-				}
+				loadContacts(); // refresh the contact list
 			}
 			else if (this.readyState == 4)
 			{
@@ -552,85 +499,22 @@ function deleteContact(contactId)
 }
 
 //==============================================
-// contact editing functions
+// utility functions
 //==============================================
 
-function openEditModal(contactId, firstName, lastName, email, phone)
+function showSuccessNotification(firstName, username)
 {
-	document.getElementById("editContactId").value = contactId;
-	document.getElementById("editFirstNameText").value = firstName;
-	document.getElementById("editLastNameText").value = lastName;
-	document.getElementById("editEmailText").value = email;
-	document.getElementById("editPhoneText").value = phone;
-	document.getElementById("contactUpdateResult").innerHTML = "";
-	document.getElementById("editContactModal").style.display = "block";
-}
-
-//==============================================
-
-function closeEditModal()
-{
-	document.getElementById("editContactModal").style.display = "none";
-	document.getElementById("contactUpdateResult").innerHTML = "";
-}
-
-//==============================================
-
-function updateContact()
-{
-	let contactId = document.getElementById("editContactId").value;
-	let firstName = document.getElementById("editFirstNameText").value.trim();
-	let lastName = document.getElementById("editLastNameText").value.trim();
-	let email = document.getElementById("editEmailText").value.trim();
-	let phone = document.getElementById("editPhoneText").value.trim();
+	// show a temporary success message in the login section
+	let loginResultElement = document.getElementById("loginResult");
+	loginResultElement.className = "success";
+	loginResultElement.innerHTML = `Account created for ${firstName}! Please log in with username: ${username}`;
 	
-	document.getElementById("contactUpdateResult").innerHTML = "";
-
-	if(!firstName || !lastName) {
-		document.getElementById("contactUpdateResult").innerHTML = "First Name and Last Name are required";
-		return;
-	}
-
-	let tmp = {
-		id: parseInt(contactId),
-		userId: userId,
-		firstName: firstName,
-		lastName: lastName,
-		email: email,
-		phone: phone
-	};
-	let jsonPayload = JSON.stringify(tmp);
-
-	let url = urlBase + '/ModifyContact.' + extension;
+	// pre-fill the username field for convenience
+	document.getElementById("loginName").value = username;
 	
-	let xhr = new XMLHttpRequest();
-	xhr.open("POST", url, true);
-	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-	try
-	{
-		xhr.onreadystatechange = function() 
-		{
-			if (this.readyState == 4 && this.status == 200) 
-			{
-				document.getElementById("contactUpdateResult").innerHTML = "Contact has been updated";
-				setTimeout(() => {
-					closeEditModal();
-					// refresh contacts if they're currently visible
-					if (contactsVisible || document.getElementById("searchText").value.trim()) {
-						loadContacts();
-					}
-				}, 1500);
-			}
-			else if (this.readyState == 4) 
-			{
-				let jsonObject = JSON.parse(xhr.responseText);
-				document.getElementById("contactUpdateResult").innerHTML = jsonObject.error || "Error updating contact";
-			}
-		};
-		xhr.send(jsonPayload);
-	}
-	catch(err)
-	{
-		document.getElementById("contactUpdateResult").innerHTML = err.message;
-	}
+	// clear the notification after a delay
+	setTimeout(() => {
+		loginResultElement.innerHTML = "";
+		loginResultElement.className = "";
+	}, 5000);
 }
