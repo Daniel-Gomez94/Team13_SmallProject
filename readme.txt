@@ -2,12 +2,12 @@
 
 This repository contains the API specification and backend code for the Contacts App project.
 
-## 📂 Structure
+## Structure
 - `contacts-api.yaml` → Swagger/OpenAPI spec (defines the API contract)
 - `LAMPAPI/` → PHP backend files will go here (`Login.php`, `AddContact.php`, `SearchContacts.php`, etc.) the color named ones just need to be altered
 
 
-## 🚀 Next Steps
+## Next Steps
 1. **Backend:**  
    - Implement the PHP endpoints (`Login.php`, `AddContact.php`, `SearchContacts.php`) inside the `LAMPAPI/` folder. The color files just need to be changed to match API
    - Make sure each endpoint matches the request/response format in `contacts-api.yaml`.
@@ -26,5 +26,6 @@ This repository contains the API specification and backend code for the Contacts
 
 ---
 
-## ℹ️ Notes 
+## Notes 
 - Once the server is deployed, update the `host` and `basePath` fields in the spec with the real server info.
+
