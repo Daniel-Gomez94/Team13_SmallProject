@@ -1,0 +1,905 @@
+﻿const urlBase = 'http://137.184.185.65/LAMPAPI';
+const extension = 'php';
+
+let userId = 0;
+let firstName = "";
+let lastName = "";
+
+//==============================================
+// authentication functions
+//==============================================
+
+function doLogin()
+{
+	userId = 0;
+	firstName = "";
+	lastName = "";
+	
+	let login = document.getElementById("loginName").value.trim();
+	let password = document.getElementById("loginPassword").value;
+	
+	document.getElementById("loginResult").innerHTML = "";
+
+	// validate required fields
+	if (!login || !password) {
+		document.getElementById("loginResult").innerHTML = "Username and password are required.";
+		return;
+	}
+
+	let hash = md5(password);
+	let tmp = {login:login, password:hash};
+	let jsonPayload = JSON.stringify(tmp);
+	
+	let url = urlBase + '/Login.' + extension;
+
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4) 
+			{
+				if (this.status == 200) 
+				{
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						userId = jsonObject.id;
+				
+						if (userId < 1) {
+							document.getElementById("loginResult").innerHTML = jsonObject.error || "Login failed - invalid credentials.";
+							return;
+						}
+				
+						firstName = jsonObject.firstName;
+						lastName = jsonObject.lastName;
+						saveCookie();
+						window.location.href = "contacts.html";
+					} catch (parseErr) {
+						document.getElementById("loginResult").innerHTML = "Login failed - server response error.";
+					}
+				}
+				else if (this.status == 401) 
+				{
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						document.getElementById("loginResult").innerHTML = jsonObject.error || "Invalid username or password.";
+					} catch (parseErr) {
+						document.getElementById("loginResult").innerHTML = "Invalid username or password.";
+					}
+				}
+				else if (this.status == 400) 
+				{
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						document.getElementById("loginResult").innerHTML = jsonObject.error || "Login request error - please check your input.";
+					} catch (parseErr) {
+						document.getElementById("loginResult").innerHTML = "Login request error - please check your input.";
+					}
+				}
+				else if (this.status == 500) 
+				{
+					document.getElementById("loginResult").innerHTML = "Server error - please try again later.";
+				}
+				else if (this.status == 0) 
+				{
+					document.getElementById("loginResult").innerHTML = "Network error - unable to connect to server.";
+				}
+				else 
+				{
+					document.getElementById("loginResult").innerHTML = "Login failed - unexpected error occurred.";
+				}
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("loginResult").innerHTML = "Login failed: " + err.message;
+	}
+
+}
+
+//==============================================
+
+function doLogout()
+{
+	userId = 0;
+	firstName = "";
+	lastName = "";
+	document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+	window.location.href = "index.html";
+}
+
+//==============================================
+
+function doRegister()
+{
+	let registerResultElement = document.getElementById("registerResult");
+	registerResultElement.innerHTML = "";
+	registerResultElement.className = ""; // clear any existing classes
+
+	// get form values
+	let firstName = document.getElementById("registerFirstName").value.trim();
+	let lastName = document.getElementById("registerLastName").value.trim();
+	let username = document.getElementById("registerUsername").value.trim();
+	let password = document.getElementById("registerPassword").value;
+
+	// validate registration form
+	let isValid = true;
+	let errors = [];
+	
+	// clear previous error styling
+	clearFieldErrors(["registerFirstName", "registerLastName", "registerUsername", "registerPassword"]);
+	
+	// validate first name
+	if (!firstName) {
+		highlightFieldError("registerFirstName");
+		errors.push("First Name is required");
+		isValid = false;
+	}
+	
+	// validate last name
+	if (!lastName) {
+		highlightFieldError("registerLastName");
+		errors.push("Last Name is required");
+		isValid = false;
+	}
+	
+	// validate username
+	if (!username) {
+		highlightFieldError("registerUsername");
+		errors.push("Username is required");
+		isValid = false;
+	} else if (username.length < 3) {
+		highlightFieldError("registerUsername");
+		errors.push("Username must be at least 3 characters long");
+		isValid = false;
+	}
+	
+	// validate password
+	if (!password) {
+		highlightFieldError("registerPassword");
+		errors.push("Password is required");
+		isValid = false;
+	} else if (password.length < 4) {
+		highlightFieldError("registerPassword");
+		errors.push("Password must be at least 4 characters long");
+		isValid = false;
+	}
+
+	if (!isValid) {
+		registerResultElement.innerHTML = errors.join(", ");
+		return;
+	}
+
+	// hash the password with md5 before sending
+	let hash = md5(password);
+
+	let tmp = {
+		firstName: firstName,
+		lastName: lastName,
+		login: username,
+		password: hash
+	};
+	let jsonPayload = JSON.stringify(tmp);
+
+	let url = urlBase + '/CreateUsers.' + extension;
+
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4) 
+			{
+				if (this.status == 201) 
+				{
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						if (jsonObject.error && jsonObject.error !== '') {
+							registerResultElement.className = "";
+							registerResultElement.innerHTML = jsonObject.error;
+						} else {
+							// show success message
+							registerResultElement.className = "success";
+							registerResultElement.innerHTML = `Welcome ${firstName}! Your account has been created successfully. You can now log in with your username: ${username}`;
+							
+							// clear form fields
+							document.getElementById("registerFirstName").value = "";
+							document.getElementById("registerLastName").value = "";
+							document.getElementById("registerUsername").value = "";
+							document.getElementById("registerPassword").value = "";
+							
+							// clear any error styling
+							clearFieldErrors(["registerFirstName", "registerLastName", "registerUsername", "registerPassword"]);
+							
+							// show success notification in login section
+							showSuccessNotification(firstName, username);
+							
+							// switch to login tab after successful registration
+							setTimeout(() => {
+								switchTab('login');
+								// clear the success message after switching
+								setTimeout(() => {
+									registerResultElement.innerHTML = "";
+									registerResultElement.className = "";
+								}, 500);
+							}, 3000);
+						}
+					} catch (parseErr) {
+						registerResultElement.className = "success";
+						registerResultElement.innerHTML = "Registration successful! You may now log in.";
+						showSuccessNotification(firstName, username);
+						setTimeout(() => {
+							switchTab('login');
+						}, 2000);
+					}
+				}
+				else if (this.status == 409) 
+				{
+					registerResultElement.className = "";
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						registerResultElement.innerHTML = jsonObject.error || "Username already exists. Please choose a different username.";
+					} catch (parseErr) {
+						registerResultElement.innerHTML = "Username already exists. Please choose a different username.";
+					}
+				}
+				else if (this.status == 400) 
+				{
+					registerResultElement.className = "";
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						registerResultElement.innerHTML = jsonObject.error || "Registration failed - invalid input data.";
+					} catch (parseErr) {
+						registerResultElement.innerHTML = "Registration failed - invalid input data.";
+					}
+				}
+				else if (this.status == 500) 
+				{
+					registerResultElement.className = "";
+					try {
+						let jsonObject = JSON.parse(xhr.responseText);
+						registerResultElement.innerHTML = jsonObject.error || "Server error - please try again later.";
+					} catch (parseErr) {
+						registerResultElement.innerHTML = "Server error - please try again later.";
+					}
+				}
+				else if (this.status == 0) 
+				{
+					registerResultElement.className = "";
+					registerResultElement.innerHTML = "Network error - unable to connect to server.";
+				}
+				else 
+				{
+					registerResultElement.className = "";
+					registerResultElement.innerHTML = "Registration failed - unexpected error occurred.";
+				}
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		registerResultElement.className = "";
+		registerResultElement.innerHTML = "Registration failed: " + err.message;
+	}
+}
+
+//==============================================
+// tab switching functionality
+//==============================================
+
+function switchTab(tabName)
+{
+	const loginTab = document.getElementById('loginTab');
+	const registerTab = document.getElementById('registerTab');
+	const loginDiv = document.getElementById('loginDiv');
+	const registerDiv = document.getElementById('registerDiv');
+	
+	if (tabName === 'login') {
+		loginTab.classList.add('active');
+		registerTab.classList.remove('active');
+		loginDiv.style.display = 'block';
+		registerDiv.style.display = 'none';
+	} else if (tabName === 'register') {
+		loginTab.classList.remove('active');
+		registerTab.classList.add('active');
+		loginDiv.style.display = 'none';
+		registerDiv.style.display = 'block';
+	}
+	
+	// clear any result messages when switching tabs
+	document.getElementById("loginResult").innerHTML = "";
+	document.getElementById("registerResult").innerHTML = "";
+	document.getElementById("registerResult").className = "";
+}
+
+//==============================================
+// session management functions
+//==============================================
+
+function saveCookie()
+{
+	let minutes = 20;
+	let date = new Date();
+	date.setTime(date.getTime()+(minutes*60*1000));	
+	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
+}
+
+//==============================================
+
+function readCookie()
+{
+	userId = -1;
+	let data = document.cookie;
+	let splits = data.split(",");
+	for(var i = 0; i < splits.length; i++) 
+	{
+		let thisOne = splits[i].trim();
+		let tokens = thisOne.split("=");
+		if( tokens[0] == "firstName" )
+		{
+			firstName = tokens[1];
+		}
+		else if( tokens[0] == "lastName" )
+		{
+			lastName = tokens[1];
+		}
+		else if( tokens[0] == "userId" )
+		{
+			userId = parseInt( tokens[1].trim() );
+		}
+	}
+	
+	if( userId < 0 )
+	{
+		window.location.href = "index.html";
+	}
+	else
+	{
+		if(document.getElementById("userName")) {
+			document.getElementById("userName").innerHTML = "Logged in as " + firstName + " " + lastName;
+		}
+	}
+}
+
+//==============================================
+// contact management functions
+//==============================================
+
+let contactsVisible = false;
+
+function toggleContactsVisibility()
+{
+	const contactList = document.getElementById("contactList");
+	const showButton = document.getElementById("showContactsButton");
+	const hideButton = document.getElementById("hideContactsButton");
+	
+	if (contactsVisible) {
+		// hide contacts
+		contactList.style.display = "none";
+		contactList.innerHTML = "";
+		showButton.style.display = "inline-block";
+		hideButton.style.display = "none";
+		contactsVisible = false;
+		document.getElementById("contactSearchResult").innerHTML = "";
+	} else {
+		// show contacts
+		contactList.style.display = "block";
+		showButton.style.display = "none";
+		hideButton.style.display = "inline-block";
+		contactsVisible = true;
+		loadContacts();
+	}
+}
+
+//==============================================
+
+function clearSearch()
+{
+	document.getElementById("searchText").value = "";
+	document.getElementById("contactSearchResult").innerHTML = "";
+	
+	if (contactsVisible) {
+		loadContacts(); // reload all contacts if they're currently visible
+	}
+}
+
+//==============================================
+
+function validateContactForm(isEdit = false)
+{
+	const prefix = isEdit ? "edit" : "";
+	const firstNameId = prefix + "firstNameText";
+	const lastNameId = prefix + "lastNameText";
+	const emailId = prefix + "emailText";
+	const phoneId = prefix + "phoneText";
+	
+	const firstName = document.getElementById(firstNameId).value.trim();
+	const lastName = document.getElementById(lastNameId).value.trim();
+	const email = document.getElementById(emailId).value.trim();
+	const phone = document.getElementById(phoneId).value.trim();
+	
+	let isValid = true;
+	let errors = [];
+	
+	// clear previous error styling
+	clearFieldErrors([firstNameId, lastNameId, emailId, phoneId]);
+	
+	// validate first name
+	if (!firstName) {
+		highlightFieldError(firstNameId);
+		errors.push("First Name is required");
+		isValid = false;
+	}
+	
+	// validate last name
+	if (!lastName) {
+		highlightFieldError(lastNameId);
+		errors.push("Last Name is required");
+		isValid = false;
+	}
+	
+	// validate email
+	if (!email) {
+		highlightFieldError(emailId);
+		errors.push("Email is required");
+		isValid = false;
+	} else if (!isValidEmail(email)) {
+		highlightFieldError(emailId);
+		errors.push("Please enter a valid email address");
+		isValid = false;
+	}
+	
+	// validate phone
+	if (!phone) {
+		highlightFieldError(phoneId);
+		errors.push("Phone number is required");
+		isValid = false;
+	} else if (!isValidPhoneNumber(phone)) {
+		highlightFieldError(phoneId);
+		errors.push("Please enter a valid 10-digit phone number");
+		isValid = false;
+	}
+	
+	return { isValid, errors, firstName, lastName, email, phone };
+}
+
+//==============================================
+
+function highlightFieldError(fieldId)
+{
+	const field = document.getElementById(fieldId);
+	field.classList.add('error-field');
+}
+
+//==============================================
+
+function clearFieldErrors(fieldIds)
+{
+	fieldIds.forEach(id => {
+		const field = document.getElementById(id);
+		field.classList.remove('error-field');
+	});
+}
+
+//==============================================
+
+function isValidEmail(email)
+{
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
+}
+
+//==============================================
+
+function isValidPhoneNumber(phone)
+{
+	// remove all non-digits
+	const digitsOnly = phone.replace(/\D/g, '');
+	return digitsOnly.length === 10;
+}
+
+//==============================================
+
+function formatPhoneNumber(input)
+{
+	// remove all non-digits
+	let value = input.value.replace(/\D/g, '');
+	
+	// limit to 10 digits
+	if (value.length > 10) {
+		value = value.slice(0, 10);
+	}
+	
+	// format as (XXX) XXX-XXXX
+	if (value.length >= 6) {
+		value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+	} else if (value.length >= 3) {
+		value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+	} else if (value.length > 0) {
+		value = `(${value}`;
+	}
+	
+	input.value = value;
+}
+
+//==============================================
+
+function addContact()
+{
+	document.getElementById("contactAddResult").innerHTML = "";
+	
+	const validation = validateContactForm();
+	
+	if (!validation.isValid) {
+		document.getElementById("contactAddResult").innerHTML = validation.errors.join(", ");
+		return;
+	}
+
+	let tmp = {
+		userId: userId,
+		firstName: validation.firstName,
+		lastName: validation.lastName,
+		email: validation.email,
+		phone: validation.phone
+	};
+	let jsonPayload = JSON.stringify( tmp );
+
+	let url = urlBase + '/AddContact.' + extension;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4 && this.status == 201) 
+			{
+				document.getElementById("contactAddResult").innerHTML = "Contact has been added";
+				document.getElementById("firstNameText").value = "";
+				document.getElementById("lastNameText").value = "";
+				document.getElementById("emailText").value = "";
+				document.getElementById("phoneText").value = "";
+				
+				// clear any error styling
+				clearFieldErrors(["firstNameText", "lastNameText", "emailText", "phoneText"]);
+				
+				// only refresh if contacts are currently visible
+				if (contactsVisible) {
+					loadContacts();
+				}
+			}
+			else if (this.readyState == 4) 
+			{
+				let jsonObject = JSON.parse(xhr.responseText);
+				document.getElementById("contactAddResult").innerHTML = jsonObject.error || "Error adding contact";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("contactAddResult").innerHTML = err.message;
+	}
+	
+}
+
+//==============================================
+
+function searchContacts()
+{
+	let srch = document.getElementById("searchText").value;
+	document.getElementById("contactSearchResult").innerHTML = "";
+	
+	// show the contact list area when searching
+	document.getElementById("contactList").style.display = "block";
+	
+	let tmp = {search:srch,userId:userId};
+	let jsonPayload = JSON.stringify( tmp );
+
+	let url = urlBase + '/SearchContacts.' + extension;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4 && this.status == 200) 
+			{
+				let jsonObject = JSON.parse( xhr.responseText );
+				document.getElementById("contactSearchResult").innerHTML = "Contact search completed";
+				displayContacts(jsonObject.results);
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("contactSearchResult").innerHTML = err.message;
+	}
+}
+
+//==============================================
+
+function loadContacts()
+{
+	// load all contacts by searching with empty string
+	let tmp = {search: "", userId: userId};
+	let jsonPayload = JSON.stringify(tmp);
+
+	let url = urlBase + '/SearchContacts.' + extension;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4 && this.status == 200) 
+			{
+				let jsonObject = JSON.parse(xhr.responseText);
+				displayContacts(jsonObject.results);
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		console.error("Error loading contacts:", err.message);
+	}
+}
+
+//==============================================
+
+function displayContacts(contacts)
+{
+	let contactListDiv = document.getElementById("contactList");
+	let contactHtml = "";
+	
+	if(contacts.length === 0) {
+		contactHtml = "<p>No contacts found.</p>";
+	} else {
+		contactHtml = "<h3>Your Contacts:</h3>";
+		contactHtml += "<div class='contacts-grid'>";
+		
+		for(let i = 0; i < contacts.length; i++) {
+			let contact = contacts[i];
+			contactHtml += "<div class='contact-card'>";
+			contactHtml += "<div class='contact-name'>" + contact.firstName + " " + contact.lastName + "</div>";
+			if(contact.email) {
+				contactHtml += "<div class='contact-info'>Email: " + contact.email + "</div>";
+			}
+			if(contact.phone) {
+				contactHtml += "<div class='contact-info'>Phone: " + contact.phone + "</div>";
+			}
+			contactHtml += "<div class='contact-actions'>";
+			contactHtml += "<button class='edit-btn' onclick='openEditModal(" + contact.id + ", \"" + contact.firstName + "\", \"" + contact.lastName + "\", \"" + (contact.email || "") + "\", \"" + (contact.phone || "") + "\")'>Edit</button>";
+			contactHtml += "<button class='delete-btn' onclick='deleteContact(" + contact.id + ")'>Delete</button>";
+			contactHtml += "</div>";
+			contactHtml += "</div>";
+		}
+		contactHtml += "</div>";
+	}
+	
+	contactListDiv.innerHTML = contactHtml;
+}
+
+//==============================================
+
+function deleteContact(contactId)
+{
+	if(!confirm("Are you sure you want to delete this contact?")) {
+		return;
+	}
+
+	let tmp = {id: contactId, userId: userId};
+	let jsonPayload = JSON.stringify(tmp);
+
+	let url = urlBase + '/DeleteContact.' + extension;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4 && this.status == 200) 
+			{
+				// only refresh if contacts are currently visible
+				if (contactsVisible || document.getElementById("searchText").value.trim()) {
+					loadContacts();
+				}
+			}
+			else if (this.readyState == 4)
+			{
+				let jsonObject = JSON.parse(xhr.responseText);
+				alert("Error deleting contact: " + (jsonObject.error || "Unknown error"));
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		alert("Error deleting contact: " + err.message);
+	}
+}
+
+//==============================================
+// contact editing functions
+//==============================================
+
+function openEditModal(contactId, firstName, lastName, email, phone)
+{
+	document.getElementById("editContactId").value = contactId;
+	document.getElementById("editFirstNameText").value = firstName;
+	document.getElementById("editLastNameText").value = lastName;
+	document.getElementById("editEmailText").value = email;
+	document.getElementById("editPhoneText").value = phone;
+	document.getElementById("contactUpdateResult").innerHTML = "";
+	
+	// clear any previous error styling
+	clearFieldErrors(["editFirstNameText", "editLastNameText", "editEmailText", "editPhoneText"]);
+	
+	document.getElementById("editContactModal").style.display = "block";
+}
+
+//==============================================
+
+function closeEditModal()
+{
+	document.getElementById("editContactModal").style.display = "none";
+	document.getElementById("contactUpdateResult").innerHTML = "";
+	
+	// clear any error styling
+	clearFieldErrors(["editFirstNameText", "editLastNameText", "editEmailText", "editPhoneText"]);
+}
+
+//==============================================
+
+function updateContact()
+{
+	let contactId = document.getElementById("editContactId").value;
+	document.getElementById("contactUpdateResult").innerHTML = "";
+	
+	const validation = validateContactForm(true);
+	
+	if (!validation.isValid) {
+		document.getElementById("contactUpdateResult").innerHTML = validation.errors.join(", ");
+		return;
+	}
+
+	let tmp = {
+		id: parseInt(contactId),
+		userId: userId,
+		firstName: validation.firstName,
+		lastName: validation.lastName,
+		email: validation.email,
+		phone: validation.phone
+	};
+	let jsonPayload = JSON.stringify(tmp);
+
+	let url = urlBase + '/ModifyContact.' + extension;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function() 
+		{
+			if (this.readyState == 4 && this.status == 200) 
+			{
+				document.getElementById("contactUpdateResult").innerHTML = "Contact has been updated";
+				setTimeout(() => {
+					closeEditModal();
+					// refresh contacts if they're currently visible
+					if (contactsVisible || document.getElementById("searchText").value.trim()) {
+						loadContacts();
+					}
+				}, 1500);
+			}
+			else if (this.readyState == 4) 
+			{
+				let jsonObject = JSON.parse(xhr.responseText);
+				document.getElementById("contactUpdateResult").innerHTML = jsonObject.error || "Error updating contact";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("contactUpdateResult").innerHTML = err.message;
+	}
+}
+
+//==============================================
+// dark mode functionality
+//==============================================
+
+function initializeDarkMode()
+{
+	const darkMode = localStorage.getItem('darkMode') === 'true';
+	if (darkMode) {
+		document.body.classList.add('dark-mode');
+		updateDarkModeIcon(true);
+	}
+}
+
+//==============================================
+
+function toggleDarkMode()
+{
+	const isDarkMode = document.body.classList.toggle('dark-mode');
+	localStorage.setItem('darkMode', isDarkMode);
+	updateDarkModeIcon(isDarkMode);
+}
+
+//==============================================
+
+function updateDarkModeIcon(isDarkMode)
+{
+	const icon = document.getElementById('darkModeIcon');
+	if (icon) {
+		if (isDarkMode) {
+			// change to sun icon in dark mode
+			icon.className = 'fas fa-sun';
+		} else {
+			// change to moon icon in light mode
+			icon.className = 'fas fa-moon';
+		}
+	}
+}
+
+//==============================================
+// background effects functions
+//==============================================
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // random starting position
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        
+        // random size variation
+        const size = Math.random() * 4 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+//==============================================
+
+function createFloatingElements() {
+    // create additional floating elements for extra visual interest
+    const container = document.querySelector('.floating-shapes');
+    
+    // add some hexagonal shapes
+    for (let i = 0; i < 3; i++) {
+        const hexagon = document.createElement('div');
+        hexagon.className = 'floating-hexagon';
+        hexagon.style.left = Math.random() * 80 + 10 + '%';
+        hexagon.style.animationDelay = Math.random() * 20 + 's';
+        hexagon.style.animationDuration = (Math.random() * 15 + 20) + 's';
+        container.appendChild(hexagon);
+    }
+}

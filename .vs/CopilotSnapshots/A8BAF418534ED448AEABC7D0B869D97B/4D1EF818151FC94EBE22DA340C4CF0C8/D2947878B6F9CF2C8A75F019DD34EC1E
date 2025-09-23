@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- page title and meta information -->
+	<title>Phone Book App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- external javascript dependencies -->
+	<script type="text/javascript" src="js/md5.js"></script>
+	<script type="text/javascript" src="js/code.js"></script>
+	
+	<!-- stylesheet and font imports -->
+	<link href="css/styles.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	
+	<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() 
+	{
+		initializeDarkMode();
+		createParticles();
+		createFloatingElements();
+	}, false);
+	</script>
+</head>
+<body>
+	<!-- aurora background effect -->
+	<div class="aurora"></div>
+
+	<!-- pulsing dots background -->
+	<div class="pulsing-dots" aria-hidden="true">
+		<div class="pulse-dot"></div>
+		<div class="pulse-dot"></div>
+		<div class="pulse-dot"></div>
+		<div class="pulse-dot"></div>
+		<div class="pulse-dot"></div>
+	</div>
+
+	<!-- floating background shapes -->
+	<div class="floating-shapes" aria-hidden="true">
+		<div class="shape"></div>
+		<div class="shape"></div>
+		<div class="shape"></div>
+		<div class="shape"></div>
+		<div class="shape"></div>
+	</div>
+
+	<!-- particle system -->
+	<div class="particles" id="particles"></div>
+
+	<!-- dark mode toggle -->
+	<div id="darkModeToggle">
+		<button type="button" 
+				id="darkModeButton" 
+				class="dark-mode-btn" 
+				onclick="toggleDarkMode();"
+				aria-label="Toggle dark mode"
+				aria-describedby="darkModeDescription"
+				title="Switch between light and dark themes">
+			<i id="darkModeIcon" class="fas fa-moon" aria-hidden="true"></i>
+		</button>
+		<span id="darkModeDescription" class="sr-only">
+			Currently in light mode. Click to switch to dark mode.
+		</span>
+	</div>
+
+	<!-- main page layout container -->
+	<div class="center-container">
+		<!-- application icon -->
+		<div class="app-icon" aria-hidden="true">
+			<i class="fa fa-address-book"></i>
+		</div>
+		
+		<!-- main page title -->
+		<h1 id="title">Phone Book App</h1>
+		
+		<!-- main application card container -->
+		<div class="app-card">
+			<!-- tab navigation -->
+			<div class="tab-container" role="tablist" aria-label="Authentication options">
+				<button type="button" 
+						id="loginTab" 
+						class="tab-button active" 
+						onclick="switchTab('login');"
+						role="tab"
+						aria-selected="true"
+						aria-controls="loginDiv"
+						tabindex="0">
+					<i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+					Sign In
+				</button>
+				<button type="button" 
+						id="registerTab" 
+						class="tab-button" 
+						onclick="switchTab('register');"
+						role="tab"
+						aria-selected="false"
+						aria-controls="registerDiv"
+						tabindex="-1">
+					<i class="fas fa-user-plus" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+					Create Account
+				</button>
+			</div>
+			
+			<!-- user login form section -->
+			<div id="loginDiv" 
+				 class="tab-content" 
+				 role="tabpanel" 
+				 aria-labelledby="loginTab"
+				 tabindex="0">
+				<span id="inner-title">
+					<i class="fas fa-lock" style="margin-right: 0.5rem; color: #667eea;" aria-hidden="true"></i>
+					Sign In to Your Account
+				</span>
+				<form onsubmit="doLogin(); return false;" novalidate>
+					<div class="input-group">
+						<label for="loginName" class="sr-only">Username</label>
+						<i class="fas fa-user input-icon" aria-hidden="true"></i>
+						<input type="text" 
+							   id="loginName" 
+							   name="username"
+							   placeholder="Username" 
+							   autocomplete="username"
+							   required
+							   aria-describedby="loginNameError" />
+					</div>
+					<div class="input-group">
+						<label for="loginPassword" class="sr-only">Password</label>
+						<i class="fas fa-lock input-icon" aria-hidden="true"></i>
+						<input type="password" 
+							   id="loginPassword" 
+							   name="password"
+							   placeholder="Password" 
+							   autocomplete="current-password"
+							   required
+							   aria-describedby="loginPasswordError" />
+					</div>
+					<button type="submit" id="loginButton" class="buttons">
+						<i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+						Sign In
+					</button>
+				</form>
+				<div id="loginResult" role="alert" aria-live="polite"></div>
+			</div>
+			
+			<!-- user registration form section -->
+			<div id="registerDiv" 
+				 class="tab-content" 
+				 style="display:none;"
+				 role="tabpanel" 
+				 aria-labelledby="registerTab"
+				 tabindex="0">
+				<span id="inner-title">
+					<i class="fas fa-user-plus" style="margin-right: 0.5rem; color: #667eea;" aria-hidden="true"></i>
+					Create Your Account
+				</span>
+				<form onsubmit="doRegister(); return false;" novalidate>
+					<div class="input-group">
+						<label for="registerFirstName" class="sr-only">First Name</label>
+						<i class="fas fa-user input-icon" aria-hidden="true"></i>
+						<input type="text" 
+							   id="registerFirstName" 
+							   name="firstName"
+							   placeholder="First Name" 
+							   autocomplete="given-name"
+							   required
+							   aria-describedby="firstNameError" />
+					</div>
+					<div class="input-group">
+						<label for="registerLastName" class="sr-only">Last Name</label>
+						<i class="fas fa-user input-icon" aria-hidden="true"></i>
+						<input type="text" 
+							   id="registerLastName" 
+							   name="lastName"
+							   placeholder="Last Name" 
+							   autocomplete="family-name"
+							   required
+							   aria-describedby="lastNameError" />
+					</div>
+					<div class="input-group">
+						<label for="registerUsername" class="sr-only">Username</label>
+						<i class="fas fa-at input-icon" aria-hidden="true"></i>
+						<input type="text" 
+							   id="registerUsername" 
+							   name="username"
+							   placeholder="Username" 
+							   autocomplete="username"
+							   required
+							   aria-describedby="usernameError" />
+					</div>
+					<div class="input-group">
+						<label for="registerPassword" class="sr-only">Password</label>
+						<i class="fas fa-lock input-icon" aria-hidden="true"></i>
+						<input type="password" 
+							   id="registerPassword" 
+							   name="password"
+							   placeholder="Password" 
+							   autocomplete="new-password"
+							   required
+							   minlength="4"
+							   aria-describedby="passwordError passwordRequirements" />
+					</div>
+					<div id="passwordRequirements" class="field-help">
+						Password must be at least 4 characters long
+					</div>
+					<button type="submit" id="registerButton" class="buttons">
+						<i class="fas fa-user-plus" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+						Register
+					</button>
+				</form>
+				<div id="registerResult" role="alert" aria-live="polite"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -116,28 +116,61 @@ function doLogout()
 
 function doRegister()
 {
+	let registerResultElement = document.getElementById("registerResult");
+	registerResultElement.innerHTML = "";
+	registerResultElement.className = ""; // clear any existing classes
+
+	// get form values
 	let firstName = document.getElementById("registerFirstName").value.trim();
 	let lastName = document.getElementById("registerLastName").value.trim();
 	let username = document.getElementById("registerUsername").value.trim();
 	let password = document.getElementById("registerPassword").value;
 
-	let registerResultElement = document.getElementById("registerResult");
-	registerResultElement.innerHTML = "";
-	registerResultElement.className = ""; // clear any existing classes
-
-	// validate required fields
-	if (!firstName || !lastName || !username || !password) {
-		registerResultElement.innerHTML = "All fields are required.";
-		return;
+	// validate registration form
+	let isValid = true;
+	let errors = [];
+	
+	// clear previous error styling
+	clearFieldErrors(["registerFirstName", "registerLastName", "registerUsername", "registerPassword"]);
+	
+	// validate first name
+	if (!firstName) {
+		highlightFieldError("registerFirstName");
+		errors.push("First Name is required");
+		isValid = false;
+	}
+	
+	// validate last name
+	if (!lastName) {
+		highlightFieldError("registerLastName");
+		errors.push("Last Name is required");
+		isValid = false;
+	}
+	
+	// validate username
+	if (!username) {
+		highlightFieldError("registerUsername");
+		errors.push("Username is required");
+		isValid = false;
+	} else if (username.length < 3) {
+		highlightFieldError("registerUsername");
+		errors.push("Username must be at least 3 characters long");
+		isValid = false;
+	}
+	
+	// validate password
+	if (!password) {
+		highlightFieldError("registerPassword");
+		errors.push("Password is required");
+		isValid = false;
+	} else if (password.length < 4) {
+		highlightFieldError("registerPassword");
+		errors.push("Password must be at least 4 characters long");
+		isValid = false;
 	}
 
-	if (password.length < 4) {
-		registerResultElement.innerHTML = "Password must be at least 4 characters long.";
-		return;
-	}
-
-	if (username.length < 3) {
-		registerResultElement.innerHTML = "Username must be at least 3 characters long.";
+	if (!isValid) {
+		registerResultElement.innerHTML = errors.join(", ");
 		return;
 	}
 
@@ -181,13 +214,16 @@ function doRegister()
 							document.getElementById("registerUsername").value = "";
 							document.getElementById("registerPassword").value = "";
 							
+							// clear any error styling
+							clearFieldErrors(["registerFirstName", "registerLastName", "registerUsername", "registerPassword"]);
+							
 							// show success notification in login section
 							showSuccessNotification(firstName, username);
 							
-							// hide registration form after a delay
+							// switch to login tab after successful registration
 							setTimeout(() => {
-								document.getElementById("registerDiv").style.display = "none";
-								// clear the success message after hiding the form
+								switchTab('login');
+								// clear the success message after switching
 								setTimeout(() => {
 									registerResultElement.innerHTML = "";
 									registerResultElement.className = "";
@@ -199,7 +235,7 @@ function doRegister()
 						registerResultElement.innerHTML = "Registration successful! You may now log in.";
 						showSuccessNotification(firstName, username);
 						setTimeout(() => {
-							document.getElementById("registerDiv").style.display = "none";
+							switchTab('login');
 						}, 2000);
 					}
 				}
@@ -252,6 +288,35 @@ function doRegister()
 		registerResultElement.className = "";
 		registerResultElement.innerHTML = "Registration failed: " + err.message;
 	}
+}
+
+//==============================================
+// tab switching functionality
+//==============================================
+
+function switchTab(tabName)
+{
+	const loginTab = document.getElementById('loginTab');
+	const registerTab = document.getElementById('registerTab');
+	const loginDiv = document.getElementById('loginDiv');
+	const registerDiv = document.getElementById('registerDiv');
+	
+	if (tabName === 'login') {
+		loginTab.classList.add('active');
+		registerTab.classList.remove('active');
+		loginDiv.style.display = 'block';
+		registerDiv.style.display = 'none';
+	} else if (tabName === 'register') {
+		loginTab.classList.remove('active');
+		registerTab.classList.add('active');
+		loginDiv.style.display = 'none';
+		registerDiv.style.display = 'block';
+	}
+	
+	// clear any result messages when switching tabs
+	document.getElementById("loginResult").innerHTML = "";
+	document.getElementById("registerResult").innerHTML = "";
+	document.getElementById("registerResult").className = "";
 }
 
 //==============================================
@@ -340,33 +405,159 @@ function clearSearch()
 	document.getElementById("searchText").value = "";
 	document.getElementById("contactSearchResult").innerHTML = "";
 	
-	if (contactsVisible) {
-		loadContacts(); // reload all contacts if they're currently visible
+	// hide the contact list when clearing search
+	document.getElementById("contactList").style.display = "none";
+	document.getElementById("contactList").innerHTML = "";
+	
+	// reset the contact visibility buttons to their initial state
+	const showButton = document.getElementById("showContactsButton");
+	const hideButton = document.getElementById("hideContactsButton");
+	
+	if (showButton && hideButton) {
+		showButton.style.display = "inline-block";
+		hideButton.style.display = "none";
+		contactsVisible = false;
 	}
+}
+
+//==============================================
+
+function validateContactForm(isEdit = false)
+{
+	const prefix = isEdit ? "edit" : "";
+	const firstNameId = prefix + "firstNameText";
+	const lastNameId = prefix + "lastNameText";
+	const emailId = prefix + "emailText";
+	const phoneId = prefix + "phoneText";
+	
+	const firstName = document.getElementById(firstNameId).value.trim();
+	const lastName = document.getElementById(lastNameId).value.trim();
+	const email = document.getElementById(emailId).value.trim();
+	const phone = document.getElementById(phoneId).value.trim();
+	
+	let isValid = true;
+	let errors = [];
+	
+	// clear previous error styling
+	clearFieldErrors([firstNameId, lastNameId, emailId, phoneId]);
+	
+	// validate first name
+	if (!firstName) {
+		highlightFieldError(firstNameId);
+		errors.push("First Name is required");
+		isValid = false;
+	}
+	
+	// validate last name
+	if (!lastName) {
+		highlightFieldError(lastNameId);
+		errors.push("Last Name is required");
+		isValid = false;
+	}
+	
+	// validate email
+	if (!email) {
+		highlightFieldError(emailId);
+		errors.push("Email is required");
+		isValid = false;
+	} else if (!isValidEmail(email)) {
+		highlightFieldError(emailId);
+		errors.push("Please enter a valid email address");
+		isValid = false;
+	}
+	
+	// validate phone
+	if (!phone) {
+		highlightFieldError(phoneId);
+		errors.push("Phone number is required");
+		isValid = false;
+	} else if (!isValidPhoneNumber(phone)) {
+		highlightFieldError(phoneId);
+		errors.push("Please enter a valid 10-digit phone number");
+		isValid = false;
+	}
+	
+	return { isValid, errors, firstName, lastName, email, phone };
+}
+
+//==============================================
+
+function highlightFieldError(fieldId)
+{
+	const field = document.getElementById(fieldId);
+	field.classList.add('error-field');
+}
+
+//==============================================
+
+function clearFieldErrors(fieldIds)
+{
+	fieldIds.forEach(id => {
+		const field = document.getElementById(id);
+		field.classList.remove('error-field');
+	});
+}
+
+//==============================================
+
+function isValidEmail(email)
+{
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
+}
+
+//==============================================
+
+function isValidPhoneNumber(phone)
+{
+	// remove all non-digits
+	const digitsOnly = phone.replace(/\D/g, '');
+	return digitsOnly.length === 10;
+}
+
+//==============================================
+
+function formatPhoneNumber(input)
+{
+	// remove all non-digits
+	let value = input.value.replace(/\D/g, '');
+	
+	// limit to 10 digits
+	if (value.length > 10) {
+		value = value.slice(0, 10);
+	}
+	
+	// format as (XXX) XXX-XXXX
+	if (value.length >= 6) {
+		value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+	} else if (value.length >= 3) {
+		value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+	} else if (value.length > 0) {
+		value = `(${value}`;
+	}
+	
+	input.value = value;
 }
 
 //==============================================
 
 function addContact()
 {
-	let newFirstName = document.getElementById("firstNameText").value.trim();
-	let newLastName = document.getElementById("lastNameText").value.trim();
-	let newEmail = document.getElementById("emailText").value.trim();
-	let newPhone = document.getElementById("phoneText").value.trim();
-	
 	document.getElementById("contactAddResult").innerHTML = "";
-
-	if(!newFirstName || !newLastName) {
-		document.getElementById("contactAddResult").innerHTML = "First Name and Last Name are required";
+	
+	const validation = validateContactForm();
+	
+	if (!validation.isValid) {
+		document.getElementById("contactAddResult").innerHTML = validation.errors.join(", ");
 		return;
 	}
 
 	let tmp = {
 		userId: userId,
-		firstName: newFirstName,
-		lastName: newLastName,
-		email: newEmail,
-		phone: newPhone
+		firstName: validation.firstName,
+		lastName: validation.lastName,
+		email: validation.email,
+		phone: validation.phone
 	};
 	let jsonPayload = JSON.stringify( tmp );
 
@@ -386,6 +577,9 @@ function addContact()
 				document.getElementById("lastNameText").value = "";
 				document.getElementById("emailText").value = "";
 				document.getElementById("phoneText").value = "";
+				
+				// clear any error styling
+				clearFieldErrors(["firstNameText", "lastNameText", "emailText", "phoneText"]);
 				
 				// only refresh if contacts are currently visible
 				if (contactsVisible) {
@@ -563,6 +757,10 @@ function openEditModal(contactId, firstName, lastName, email, phone)
 	document.getElementById("editEmailText").value = email;
 	document.getElementById("editPhoneText").value = phone;
 	document.getElementById("contactUpdateResult").innerHTML = "";
+	
+	// clear any previous error styling
+	clearFieldErrors(["editFirstNameText", "editLastNameText", "editEmailText", "editPhoneText"]);
+	
 	document.getElementById("editContactModal").style.display = "block";
 }
 
@@ -572,6 +770,9 @@ function closeEditModal()
 {
 	document.getElementById("editContactModal").style.display = "none";
 	document.getElementById("contactUpdateResult").innerHTML = "";
+	
+	// clear any error styling
+	clearFieldErrors(["editFirstNameText", "editLastNameText", "editEmailText", "editPhoneText"]);
 }
 
 //==============================================
@@ -579,25 +780,22 @@ function closeEditModal()
 function updateContact()
 {
 	let contactId = document.getElementById("editContactId").value;
-	let firstName = document.getElementById("editFirstNameText").value.trim();
-	let lastName = document.getElementById("editLastNameText").value.trim();
-	let email = document.getElementById("editEmailText").value.trim();
-	let phone = document.getElementById("editPhoneText").value.trim();
-	
 	document.getElementById("contactUpdateResult").innerHTML = "";
-
-	if(!firstName || !lastName) {
-		document.getElementById("contactUpdateResult").innerHTML = "First Name and Last Name are required";
+	
+	const validation = validateContactForm(true);
+	
+	if (!validation.isValid) {
+		document.getElementById("contactUpdateResult").innerHTML = validation.errors.join(", ");
 		return;
 	}
 
 	let tmp = {
 		id: parseInt(contactId),
 		userId: userId,
-		firstName: firstName,
-		lastName: lastName,
-		email: email,
-		phone: phone
+		firstName: validation.firstName,
+		lastName: validation.lastName,
+		email: validation.email,
+		phone: validation.phone
 	};
 	let jsonPayload = JSON.stringify(tmp);
 
@@ -632,5 +830,43 @@ function updateContact()
 	catch(err)
 	{
 		document.getElementById("contactUpdateResult").innerHTML = err.message;
+	}
+}
+
+//==============================================
+// dark mode functionality
+//==============================================
+
+function initializeDarkMode()
+{
+	const darkMode = localStorage.getItem('darkMode') === 'true';
+	if (darkMode) {
+		document.body.classList.add('dark-mode');
+		updateDarkModeIcon(true);
+	}
+}
+
+//==============================================
+
+function toggleDarkMode()
+{
+	const isDarkMode = document.body.classList.toggle('dark-mode');
+	localStorage.setItem('darkMode', isDarkMode);
+	updateDarkModeIcon(isDarkMode);
+}
+
+//==============================================
+
+function updateDarkModeIcon(isDarkMode)
+{
+	const icon = document.getElementById('darkModeIcon');
+	if (icon) {
+		if (isDarkMode) {
+			// change to sun icon in dark mode
+			icon.className = 'fas fa-sun';
+		} else {
+			// change to moon icon in light mode
+			icon.className = 'fas fa-moon';
+		}
 	}
 }

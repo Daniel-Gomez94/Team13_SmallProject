@@ -12,6 +12,7 @@
 	<!-- stylesheet imports -->
     <link href="css/styles.css" rel="stylesheet">	
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 	
 	<!-- page initialization script -->
 	<script type="text/javascript">
@@ -19,64 +20,109 @@
 	{
 		// verify user authentication but don't auto-load contacts
 		readCookie();
+		initializeDarkMode();
 	}, false);
 	</script>
 	
 </head>
 <body>
 
-<!-- main page header -->
-<h1 id="title">COP 4331 Contacts App</h1>
-
-<!-- user information and logout section -->
-<div id="loggedInDiv">
-	<span id="userName"></span><br />
-	<button type="button" id="logoutButton" class="buttons" onclick="doLogout();"> Log Out </button>
+<!-- page header with title, user info, and dark mode toggle -->
+<div class="page-header">
+	<div class="header-left">
+		<h1 id="title" onclick="window.open('https://github.com/Daniel-Gomez94/Team13_SmallProject', '_blank');" style="cursor: pointer;">
+			<i class="fas fa-address-book" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			Contacts App
+		</h1>
+	</div>
+	<div class="header-right">
+		<div id="loggedInDiv">
+			<i class="fas fa-user-circle" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			<span id="userName"></span>
+			<button type="button" id="logoutButton" class="buttons" onclick="doLogout();">
+				<i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+				Log Out
+			</button>
+		</div>
+		<div id="darkModeToggle">
+			<button type="button" id="darkModeButton" aria-label="darkmode-toggle" class="dark-mode-btn" onclick="toggleDarkMode();">
+				<i id="darkModeIcon" class="fas fa-moon" aria-hidden="true"></i>
+			</button>
+		</div>
+	</div>
 </div>
 
 <!-- main application interface -->
 <div id="accessUIDiv">
-	<br />
-
 	<!-- contact visibility controls -->
 	<div id="contactControls">
-		<button type="button" id="showContactsButton" class="buttons" onclick="toggleContactsVisibility();"> Show All Contacts </button>
-		<button type="button" id="hideContactsButton" class="buttons" style="display:none;" onclick="toggleContactsVisibility();"> Hide Contacts </button>
+		<h3><i class="fas fa-eye" style="margin-right: 0.5rem;" aria-hidden="true"></i>Contact Visibility</h3>
+		<button type="button" id="showContactsButton" class="buttons" onclick="toggleContactsVisibility();">
+			<i class="fas fa-eye" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			Show All Contacts
+		</button>
+		<button type="button" id="hideContactsButton" class="buttons" style="display:none;" onclick="toggleContactsVisibility();">
+			<i class="fas fa-eye-slash" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			Hide Contacts
+		</button>
 	</div>
-	<br />
 
 	<!-- contact search functionality -->
-	<input type="text" id="searchText" placeholder="Search Contacts"/>
-	<button type="button" id="searchContactButton" class="buttons" onclick="searchContacts();"> Search Contacts </button>
-	<button type="button" id="clearSearchButton" class="buttons" onclick="clearSearch();"> Clear Search </button><br />
-	<span id="contactSearchResult"></span>
+	<div class="search-section">
+		<h3><i class="fas fa-search" style="margin-right: 0.5rem;" aria-hidden="true"></i>Search Contacts</h3>
+		<input type="text" id="searchText" placeholder="Search by name, email, or phone..."/>
+		<button type="button" id="searchContactButton" class="buttons" onclick="searchContacts();">
+			<i class="fas fa-search" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			Search
+		</button>
+		<button type="button" id="clearSearchButton" class="buttons" onclick="clearSearch();">
+			<i class="fas fa-times" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+			Clear
+		</button>
+		<span id="contactSearchResult"></span>
+	</div>
 	
 	<!-- contact list display area -->
 	<div id="contactList" style="display:none;">
-	</div><br /><br />
+	</div>
 
 	<!-- add new contact form section -->
-	<h3>Add New Contact</h3>
-	<input type="text" id="firstNameText" placeholder="First Name" required>
-	<input type="text" id="lastNameText" placeholder="Last Name" required><br/><br/>
-	<input type="text" id="emailText" placeholder="Email">
-	<input type="text" id="phoneText" placeholder="Phone"><br/><br/>
-	<button type="button" id="addContactButton" class="buttons" onclick="addContact();"> Add Contact </button><br />
-	<span id="contactAddResult"></span>
+	<div class="form-section">
+		<h3><i class="fas fa-plus-circle" style="margin-right: 0.5rem;" aria-hidden="true"></i>Add New Contact</h3>
+		<div class="contact-form">
+			<input type="text" id="firstNameText" placeholder="First Name *" required>
+			<input type="text" id="lastNameText" placeholder="Last Name *" required>
+			<input type="email" id="emailText" placeholder="Email Address *" required>
+			<input type="tel" id="phoneText" placeholder="Phone Number *" required oninput="formatPhoneNumber(this)">
+			<button type="button" id="addContactButton" class="buttons" onclick="addContact();">
+				<i class="fas fa-plus" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+				Add Contact
+			</button>
+		</div>
+		<span id="contactAddResult"></span>
+	</div>
 </div>
 
 <!-- edit contact modal -->
 <div id="editContactModal" class="modal" style="display:none;">
 	<div class="modal-content">
 		<span class="close" onclick="closeEditModal();">&times;</span>
-		<h3>Edit Contact</h3>
-		<input type="hidden" id="editContactId">
-		<input type="text" id="editFirstNameText" placeholder="First Name" required>
-		<input type="text" id="editLastNameText" placeholder="Last Name" required><br/><br/>
-		<input type="text" id="editEmailText" placeholder="Email">
-		<input type="text" id="editPhoneText" placeholder="Phone"><br/><br/>
-		<button type="button" class="buttons" onclick="updateContact();"> Update Contact </button>
-		<button type="button" class="buttons cancel-btn" onclick="closeEditModal();"> Cancel </button><br />
+		<h3><i class="fas fa-edit" style="margin-right: 0.5rem;" aria-hidden="true"></i>Edit Contact</h3>
+		<div class="contact-form">
+			<input type="hidden" id="editContactId">
+			<input type="text" id="editFirstNameText" placeholder="First Name *" required>
+			<input type="text" id="editLastNameText" placeholder="Last Name *" required>
+			<input type="email" id="editEmailText" placeholder="Email Address *" required>
+			<input type="tel" id="editPhoneText" placeholder="Phone Number *" required oninput="formatPhoneNumber(this)">
+			<button type="button" class="buttons" onclick="updateContact();">
+				<i class="fas fa-save" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+				Update Contact
+			</button>
+			<button type="button" class="buttons cancel-btn" onclick="closeEditModal();">
+				<i class="fas fa-times" style="margin-right: 0.5rem;" aria-hidden="true"></i>
+				Cancel
+			</button>
+		</div>
 		<span id="contactUpdateResult"></span>
 	</div>
 </div>

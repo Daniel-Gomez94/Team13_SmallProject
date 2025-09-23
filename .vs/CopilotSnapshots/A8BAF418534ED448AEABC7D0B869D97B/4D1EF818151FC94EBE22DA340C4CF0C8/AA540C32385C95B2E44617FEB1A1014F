@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- page title and meta information -->
+	<title>COP 4331 Contacts App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- external javascript dependencies -->
+	<script type="text/javascript" src="js/code.js"></script>
+	
+	<!-- stylesheet imports -->
+    <link href="css/styles.css" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	
+	<!-- page initialization script -->
+	<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() 
+	{
+		// verify user authentication but don't auto-load contacts
+		readCookie();
+		initializeDarkMode();
+	}, false);
+	</script>
+	
+</head>
+<body>
+
+<!-- dark mode toggle -->
+<div id="darkModeToggle">
+	<button type="button" id="darkModeButton" aria-label="darkmode-toggle" class="dark-mode-btn" onclick="toggleDarkMode();">
+		<i id="darkModeIcon" class="fas fa-moon"></i>
+	</button>
+</div>
+
+<!-- main page header -->
+<h1 id="title">COP 4331 Contacts App</h1>
+
+<!-- user information and logout section -->
+<div id="loggedInDiv">
+	<span id="userName"></span><br />
+	<button type="button" id="logoutButton" class="buttons" onclick="doLogout();"> Log Out </button>
+</div>
+
+<!-- main application interface -->
+<div id="accessUIDiv">
+	<br />
+
+	<!-- contact visibility controls -->
+	<div id="contactControls">
+		<button type="button" id="showContactsButton" class="buttons" onclick="toggleContactsVisibility();"> Show All Contacts </button>
+		<button type="button" id="hideContactsButton" class="buttons" style="display:none;" onclick="toggleContactsVisibility();"> Hide Contacts </button>
+	</div>
+	<br />
+
+	<!-- contact search functionality -->
+	<input type="text" id="searchText" placeholder="Search Contacts"/>
+	<button type="button" id="searchContactButton" class="buttons" onclick="searchContacts();"> Search Contacts </button>
+	<button type="button" id="clearSearchButton" class="buttons" onclick="clearSearch();"> Clear Search </button><br />
+	<span id="contactSearchResult"></span>
+	
+	<!-- contact list display area -->
+	<div id="contactList" style="display:none;">
+	</div><br /><br />
+
+	<!-- add new contact form section -->
+	<h3>Add New Contact</h3>
+	<input type="text" id="firstNameText" placeholder="First Name *" required>
+	<input type="text" id="lastNameText" placeholder="Last Name *" required><br/><br/>
+	<input type="email" id="emailText" placeholder="Email *" required>
+	<input type="tel" id="phoneText" placeholder="Phone Number *" required oninput="formatPhoneNumber(this)"><br/><br/>
+	<button type="button" id="addContactButton" class="buttons" onclick="addContact();"> Add Contact </button><br />
+	<span id="contactAddResult"></span>
+</div>
+
+<!-- edit contact modal -->
+<div id="editContactModal" class="modal" style="display:none;">
+	<div class="modal-content">
+		<span class="close" onclick="closeEditModal();">&times;</span>
+		<h3>Edit Contact</h3>
+		<input type="hidden" id="editContactId">
+		<input type="text" id="editFirstNameText" placeholder="First Name *" required>
+		<input type="text" id="editLastNameText" placeholder="Last Name *" required><br/><br/>
+		<input type="email" id="editEmailText" placeholder="Email *" required>
+		<input type="tel" id="editPhoneText" placeholder="Phone Number *" required oninput="formatPhoneNumber(this)"><br/><br/>
+		<button type="button" class="buttons" onclick="updateContact();"> Update Contact </button>
+		<button type="button" class="buttons cancel-btn" onclick="closeEditModal();"> Cancel </button><br />
+		<span id="contactUpdateResult"></span>
+	</div>
+</div>
+
+</body>
+</html>
