@@ -16,9 +16,10 @@ Users can register, log in, and manage their own personal contacts securely.
 - **Database:** MySQL
 - **Hosting:** Digital Ocean
 
-- ## Team Members
+## Team Members
 - **Database-** Daniel Gomez
 - **Frontend-** Dylan Money
 - **API-** Nicholas Borzilleri 
+
 
 
