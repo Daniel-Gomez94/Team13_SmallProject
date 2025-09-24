@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: http://137.184.185.65");
+header("Access-Control-Allow-Origin: http://www.myphonebook.xyz");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
@@ -29,7 +29,7 @@ if (!is_numeric($userId)) {
 }
 
 $conn = new mysqli("localhost","TheBeast","WeLoveCOP4331","Smallproject");
-if ($conn->connect_error) { sendJson(['results'=>[], 'error'=>'database connection failed'], 500); }
+if ($conn->connect_error) { sendJson(['results'=>[], 'error'=>'DB connection failed'], 500); }
 
 $sql = "SELECT ID, FirstName, LastName, Email, Phone
         FROM Contacts
@@ -37,13 +37,13 @@ $sql = "SELECT ID, FirstName, LastName, Email, Phone
         ORDER BY LastName, FirstName";
 
 $stmt = $conn->prepare($sql);
-if (!$stmt) { $conn->close(); sendJson(['results'=>[], 'error'=>'prepare failed'], 500); }
+if (!$stmt) { $conn->close(); sendJson(['results'=>[], 'error'=>'Prepare failed'], 500); }
 
 $like = "%".$search."%";
 $stmt->bind_param("ssi", $like, $like, $userId); // s,s,int
 if (!$stmt->execute()) {
   $stmt->close(); $conn->close();
-  sendJson(['results'=>[], 'error'=>'query failed'], 500);
+  sendJson(['results'=>[], 'error'=>'Query failed'], 500);
 }
 
 $res = $stmt->get_result();

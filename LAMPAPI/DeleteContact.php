@@ -1,13 +1,13 @@
 <?php
-// configure cross-origin resource sharing headers
-header("Access-Control-Allow-Origin: http://137.184.185.65");
+// CORS
+header("Access-Control-Allow-Origin: http://www.myphonebook.xyz");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // keeping post for consistency
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // keeping POST for consistency
 
-// handle preflight requests
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
-// helper functions for json handling
+// Helpers
 function sendJson($obj, $status = 200) {
   http_response_code($status);
   header('Content-Type: application/json; charset=utf-8');
@@ -25,43 +25,43 @@ function getJsonBody() {
 
 
 $in     = getJsonBody();
-$id     = $in['id']     ?? null;   // contact id to delete
-$userId = $in['userId'] ?? null;   // owner user id
+$id     = $in['id']     ?? null;   // contact ID to delete
+$userId = $in['userId'] ?? null;   // owner user ID
 
 if (!is_numeric($id) || !is_numeric($userId)) {
   sendJson(['error' => 'id and userId are required (integers)'], 400);
 }
 
 $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "Smallproject");
-if ($conn->connect_error) { sendJson(['error' => 'database connection failed'], 500); }
+if ($conn->connect_error) { sendJson(['error' => 'DB connection failed'], 500); }
 
 $chk = $conn->prepare("SELECT ID FROM Contacts WHERE ID = ? AND UserID = ? LIMIT 1");
-if (!$chk) { $conn->close(); sendJson(['error' => 'prepare failed'], 500); }
+if (!$chk) { $conn->close(); sendJson(['error' => 'Prepare failed'], 500); }
 $chk->bind_param("ii", $id, $userId);
 $chk->execute();
 $exists = $chk->get_result()->fetch_assoc();
 $chk->close();
 if (!$exists) {
   $conn->close();
-  sendJson(['error' => 'contact not found for this userId'], 404);
+  sendJson(['error' => 'Contact not found for this userId'], 404);
 }
 
-// delete contact record
+// Delete section
 $del = $conn->prepare("DELETE FROM Contacts WHERE ID = ? AND UserID = ?");
-if (!$del) { $conn->close(); sendJson(['error' => 'prepare failed'], 500); }
+if (!$del) { $conn->close(); sendJson(['error' => 'Prepare failed'], 500); }
 $del->bind_param("ii", $id, $userId);
 if (!$del->execute()) {
   $err = $del->error; $del->close(); $conn->close();
-  sendJson(['error' => "delete failed: $err"], 500);
+  sendJson(['error' => "Delete failed: $err"], 500);
 }
 $affected = $del->affected_rows;
 $del->close();
 $conn->close();
 
 if ($affected !== 1) {
-  // shouldn't happen after we verified, but just in case
-  sendJson(['error' => 'contact not deleted'], 500);
+  // Shouldn't happen after we verified, but just in case
+  sendJson(['error' => 'Contact not deleted'], 500);
 }
 
-// return confirmation response
+// Return a simple confirmation payload
 sendJson(['id' => (int)$id, 'userId' => (int)$userId, 'error' => ''], 200);

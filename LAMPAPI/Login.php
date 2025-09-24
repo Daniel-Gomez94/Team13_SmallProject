@@ -1,21 +1,16 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// configure cross-origin resource sharing headers
-header("Access-Control-Allow-Origin: http://137.184.185.65");
+// CORS
+header("Access-Control-Allow-Origin: http://www.myphonebook.xyz");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
-// handle preflight requests
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
 }
 
-// helper functions
+// Helpers
 function sendJson($obj, $status = 200) {
   http_response_code($status);
   header('Content-Type: application/json; charset=utf-8');
@@ -32,7 +27,7 @@ function getJsonBody() {
   return $data ?: [];
 }
 
-// read and validate input
+// Read input
 $in = getJsonBody();
 $login = trim($in['login'] ?? '');
 $password = trim($in['password'] ?? '');
@@ -40,19 +35,19 @@ if ($login === '' || $password === '') {
   sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'login and password required'], 400);
 }
 
-// establish database connection
+// DB
 $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "Smallproject");
 if ($conn->connect_error) {
-  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'database connection failed'], 500);
+  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'DB connection failed'], 500);
 }
 
-// hash incoming password to match user creation behavior
+// Hash incoming password to match CreateUsers.php behavior
 $hashed = md5($password);
 
-// prepare and execute user lookup query
+// Query
 $stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE Login = ? AND Password = ? LIMIT 1");
 if (!$stmt) {
-  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'prepare failed'], 500);
+  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'Prepare failed'], 500);
 }
 $stmt->bind_param("ss", $login, $hashed);
 $stmt->execute();
@@ -71,5 +66,5 @@ if ($row = $result->fetch_assoc()) {
 } else {
   $stmt->close();
   $conn->close();
-  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'invalid credentials'], 401);
+  sendJson(['id'=>0,'firstName'=>'','lastName'=>'','error'=>'Invalid credentials'], 401);
 }

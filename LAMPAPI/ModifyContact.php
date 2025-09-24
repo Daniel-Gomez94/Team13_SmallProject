@@ -1,6 +1,6 @@
 <?php
 // configure cross-origin resource sharing headers
-header("Access-Control-Allow-Origin: http://137.184.185.65");
+header("Access-Control-Allow-Origin: http://www.myphonebook.xyz");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 
